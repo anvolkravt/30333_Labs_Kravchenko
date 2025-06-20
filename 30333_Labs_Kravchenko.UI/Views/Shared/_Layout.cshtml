@@ -6,43 +6,45 @@
     <title>@ViewData["Title"] - _30333_Labs_Kravchenko.UI</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/_30333_Labs_Kravchenko.UI.styles.css" asp-append-version="true" />
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">_30333_Labs_Kravchenko.UI</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
+        <div class="container">
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <partial name="_MenuPartial" />
+                <partial name="_UserInfoPartial" />
+            </nav>
+        </div>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer>
         <div class="container">
-            &copy; 2025 - _30333_Labs_Kravchenko.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="navbar navbar-dark navbar-expand-md bg-dark">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-item nav-link" href="http://www.facebook.com">
+                        <i class="fab fa-facebook-f fs-3"></i>
+                    </a>
+                    <a class="nav-item nav-link" href="http://www.vk.com">
+                        <i class="fab fa-vk fs-3"></i>
+                    </a>
+                    <a class="nav-item nav-link" href="http://www.twitter.com">
+                        <i class="fab fa-twitter fs-3"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

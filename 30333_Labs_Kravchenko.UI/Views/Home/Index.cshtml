@@ -1,142 +1,69 @@
 ﻿@{
-    Layout = null;
+    ViewData["Title"]="Index";
+
+    var list = ViewData["List"] as SelectList;
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" />
-    <link href="~/30333_Labs_Kravchenko.UI.styles.css" asp-appendversion="true" rel="stylesheet" />
-
-    <title>Index</title>
-</head>
-<body>
-    <header>
-        <div class="container">
-            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">Kravchenko</a>
-                <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="#">Лб 1</a>
-                    <a class="nav-item nav-link" href="#">Каталог</a>
-                    <a class="nav-item nav-link" href="#">Администрирование</a>
-                </div>
-                <a href="#" class="navbar-text ms-auto">
-                    00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
-                </a>
-                <div class="dropdown ms-4 nav-color">
-                    <button class="btn btn-secondary dropdown-toggle"
-                            type="button" id="dropdownMenuButton"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        User@gmail.com
-                        <img src="images/user.png" width="30"
-                             alt="User" class="rounded nav-color" />
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li>
-                            <span class="dropdown-item-text">
-                                <img src="images/user.png"
-                                     width="50" alt="User" class="rounded" />
-                                user@gmail.com
-                            </span>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form id="logoutForm" class="form-inline" action="#">
-                                <button id="logout" type="submit" class="nav-link btn btn-link text-dark">
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+<h1>@ViewData["LabTitle"]</h1>
+<h2>Список</h2>
+<ol type="A">
+    @for (int i = 0; i < 5; i++)
+    {
+        <li class="ms-2">элемент @i списка</li>
+    }
+</ol>
+<hr>
+<form method="post">
+    <h2>Форма</h2>
+    <div class="row mb-3">
+        <div class="col-sm-4 offset-sm-2">
+            <select id="inputList" asp-items="@list" name="list" class="form-select"></select>
         </div>
-    </header>
-
-    <main class="container">
-        <h1>Лабораторная работа 1</h1>
-        <h2>Список</h2>
-        <ol type="A">
-            <li class="ms-2">элемент 1 списка</li>
-            <li class="ms-2">элемент 2 списка</li>
-        </ol>
-        <hr>
-        <form method ="post">
-            <h2>Форма</h2>
-            <div class="row mb-3">
-                <div class="col-sm-10 offset-sm-2">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="checkbox1">
-                        <label class="form-check-label" for="check1">
-                            Чек-бокс 1
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check2" name="checkbox2">
-                        <label class="form-check-label" for="check2">
-                            Чек-бокс 2
-                        </label>
-                    </div>
-                </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-10 offset-sm-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="check1" name="checkbox1">
+                <label class="form-check-label" for="check1">
+                    Чек-бокс 1
+                </label>
             </div>
-            <div class="row mb-3">
-                <div class="col-sm-10 offset-sm-2">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio1" value="option1" checked>
-                        <label class="form-check-label" for="radio1">Радио-1</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio2" value="option2">
-                        <label class="form-check-label" for="radio2">Радио-2</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio3" value="option3">
-                        <label class="form-check-label" for="radio3">Радио-3</label>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="inputEmail" class="col-sm-2 col-form-label">Логин:</label>
-                <div class="col-sm-10">
-                    <input type="email" class="form-control" id="inputEmail" name="email">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="inputPassword" class="col-sm-2 col-form-label">Пароль:</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" id="inputPassword" name="password">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary mb-4">Отправить</button>
-        </form>
-    </main>
-
-
-    <footer>
-        <div class="container">
-            <div class="navbar navbar-dark navbar-expand-md bg-dark">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-item nav-link" href="http://www.facebook.com">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="nav-item nav-link" href="http://www.vk.com">
-                        <i class="fab fa-vk"></i>
-                    </a>
-                    <a class="nav-item nav-link" href="http://www.twitter.com">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="check2" name="checkbox2">
+                <label class="form-check-label" for="check2">
+                    Чек-бокс 2
+                </label>
             </div>
         </div>
-    </footer>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-10 offset-sm-2">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio1" value="option1" checked>
+                <label class="form-check-label" for="radio1">Радио-1</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio2" value="option2">
+                <label class="form-check-label" for="radio2">Радио-2</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio3" value="option3">
+                <label class="form-check-label" for="radio3">Радио-3</label>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="inputEmail" class="col-sm-2 col-form-label">Логин:</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="inputEmail" name="email">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Пароль:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword" name="password">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mb-4">Отправить</button>
+</form>
 
-    <link href="~/lib/jquery/dist/jquery.min.js" />
-    <link href="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" />
-</body>
-</html>
