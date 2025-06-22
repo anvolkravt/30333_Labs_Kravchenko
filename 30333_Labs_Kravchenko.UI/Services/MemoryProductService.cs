@@ -1,5 +1,6 @@
 ﻿using _30333_Labs_Kravchenko.Domain.Entities;
 using _30333_Labs_Kravchenko.Domain.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace _30333_Labs_Kravchenko.UI.Services
 {
@@ -7,13 +8,19 @@ namespace _30333_Labs_Kravchenko.UI.Services
     {
         List<Medication> _medications;
         List<Category> _categories;
-        public MemoryProductService(ICategoryService categoryService)
+        IConfiguration _config;
+
+        public MemoryProductService(
+            ICategoryService categoryService,
+            IConfiguration config)
         {
+            _config = config;
             _categories = categoryService.GetCategoryListAsync()
-           .Result
-           .Data;
+                .Result
+                .Data;
             SetupData();
         }
+
         private void SetupData()
         {
             _medications = new List<Medication>
@@ -86,15 +93,43 @@ namespace _30333_Labs_Kravchenko.UI.Services
 
         public Task<ResponseData<ProductListModel<Medication>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
+            // Получить размер страницы из конфигурации
+            int pageSize = _config.GetValue<int>("ItemsPerPage");
+
+            // Фильтрация по категории
             var data = _medications
                 .Where(m => categoryNormalizedName == null ||
                             _categories.Any(c => c.NormalizedName.Equals(categoryNormalizedName, StringComparison.OrdinalIgnoreCase) && c.Id == m.CategoryId))
                 .ToList();
 
-            var model = new ProductListModel<Medication> { Items = data };
-            var result = new ResponseData<ProductListModel<Medication>> { Data = model };
+            // Вычислить общее количество страниц
+            int totalPages = (int)Math.Ceiling(data.Count / (double)pageSize);
 
-            if (!data.Any() && categoryNormalizedName != null)
+            // Ограничить pageNo
+            pageNo = Math.Max(1, Math.Min(pageNo, totalPages));
+
+            // Выборка нужной страницы
+            var pageData = data
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Создать модель
+            var model = new ProductListModel<Medication>
+            {
+                Items = pageData,
+                CurrentPage = pageNo,
+                TotalPages = totalPages
+            };
+
+            var result = new ResponseData<ProductListModel<Medication>>
+            {
+                Data = model,
+                Success = true
+            };
+
+            // Если список пустой
+            if (!pageData.Any() && categoryNormalizedName != null)
             {
                 result.Success = false;
                 result.ErrorMessage = $"Нет лекарств в категории '{categoryNormalizedName}'";

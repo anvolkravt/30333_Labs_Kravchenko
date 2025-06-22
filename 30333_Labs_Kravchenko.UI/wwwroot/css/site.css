@@ -7,7 +7,30 @@ header, footer {
 }
 
 .card-img-top-fixed {
-    height: 200px; /* Фиксированная высота изображения */
-    width: 100%; /* Растягивает по ширине карточки */
-    object-fit: cover; /* Обрезает изображение, сохраняя пропорции */
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card-equal-height {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1rem;
+}
+
+.card-manufacturer {
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+.card-footer {
+    text-align: center;
+    padding: 0.5rem 1rem;
 }

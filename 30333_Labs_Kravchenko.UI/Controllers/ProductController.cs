@@ -1,35 +1,34 @@
-﻿//using _30333_Labs_Kravchenko.UI.Services;
-//using Microsoft.AspNetCore.Mvc;
-
-//namespace _30333_Labs_Kravchenko.UI.Controllers
-//{
-//    public class ProductController(ICategoryService categoryService, IProductService productService) : Controller
-//    {
-//        public async Task<IActionResult> Index()
-//        {
-//            var productResponse = await productService.GetProductListAsync(null);
-//            if (!productResponse.Success)
-//                return NotFound(productResponse.ErrorMessage);
-//            return View(productResponse.Data.Items);
-//        }
-//    }
-
-//}
-
-using _30333_Labs_Kravchenko.UI.Services;
+﻿using _30333_Labs_Kravchenko.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using _30333_Labs_Kravchenko.Domain.Models;
 using _30333_Labs_Kravchenko.Domain.Entities;
 
 namespace _30333_Labs_Kravchenko.UI.Controllers
 {
-    public class ProductController(ICategoryService categoryService, IProductService productService) : Controller
+    public class ProductController : Controller
     {
-        private readonly ICategoryService _categoryService = categoryService;
-        private readonly IProductService _productService = productService;
+        private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
+
+        public ProductController(ICategoryService categoryService, IProductService productService)
+        {
+            _categoryService = categoryService;
+            _productService = productService;
+        }
 
         public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
+            // Если pageNo = 1 и параметр отсутствует в запросе, перенаправить на URL с ?pageno=1
+            if (pageNo == 1 && !HttpContext.Request.Query.ContainsKey("pageno"))
+            {
+                var queryParams = new Dictionary<string, string?>
+                {
+                    { "pageno", "1" },
+                    { "category", category }
+                };
+                return RedirectToAction("Index", "Product", queryParams);
+            }
+
             var productResponse = await _productService.GetProductListAsync(category, pageNo);
             if (!productResponse.Success)
             {
