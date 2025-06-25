@@ -11,14 +11,12 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false">
             @User.Identity.Name
-            <img src="/Image/GetAvatar" width="30" alt="User" class="rounded nav-color" />
-            @* <img img-action="GetAvatar" img-controller="Image" width="30" alt="User" class="rounded nav-color" /> *@
+            <img img-action="GetAvatar" img-controller="Image" width="30" alt="User" class="rounded nav-color" />
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li>
                 <span class="dropdown-item-text">
-                    <img src="/Image/GetAvatar" width="50" alt="User" class="rounded" />
-                    @* <img img-action="GetAvatar" img-controller="Image" width="50" alt="User" class="rounded" /> *@
+                    <img img-action="GetAvatar" img-controller="Image" width="50" alt="User" class="rounded" />
                     @User.Identity.Name
                 </span>
             </li>
@@ -28,7 +26,7 @@
                       asp-area="Identity"
                       asp-page="/Account/Logout"
                       asp-route-returnurl="/">
-                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark">
+                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark px-3">
                         Logout
                     </button>
                 </form>

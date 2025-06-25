@@ -42,31 +42,7 @@
                     <partial name="_ProductItemPartial" model="@item" />
                 }
             </div>
-            <!-- Pager -->
-            <div class="row mt-3">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item @(prev == Model.CurrentPage ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@prev" asp-route-category="@category" aria-label="Previous">
-                                <span aria-hidden="true">«</span>
-                            </a>
-                        </li>
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@i" asp-route-category="@category">@i</a>
-                            </li>
-                        }
-                        <li class="page-item @(next == Model.CurrentPage ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@next" asp-route-category="@category" aria-label="Next">
-                                <span aria-hidden="true">»</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            @* <pager current-page="@Model.CurrentPage" total-pages="@Model.TotalPages" category="@category"></pager> *@
-            <!-- Pager -->
+            <pager current-page="@Model.CurrentPage" total-pages="@Model.TotalPages" category="@category"></pager>
         }
     </div>
 </div>

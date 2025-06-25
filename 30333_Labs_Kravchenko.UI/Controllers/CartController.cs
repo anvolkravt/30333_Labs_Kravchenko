@@ -6,7 +6,6 @@ namespace _30333_Labs_Kravchenko.UI.Controllers
     {
         public IActionResult Add(int id, string returnUrl)
         {
-            // Заглушка: выводим параметры для отладки
             ViewData["Message"] = $"Добавлен препарат с ID: {id}, ReturnUrl: {returnUrl}";
             return View();
         }
