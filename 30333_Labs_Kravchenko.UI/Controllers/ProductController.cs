@@ -18,7 +18,6 @@ namespace _30333_Labs_Kravchenko.UI.Controllers
 
         public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
-            // Если pageNo = 1 и параметр отсутствует в запросе, перенаправить на URL с ?pageno=1
             if (pageNo == 1 && !HttpContext.Request.Query.ContainsKey("pageno"))
             {
                 var queryParams = new Dictionary<string, string?>

@@ -1,6 +1,7 @@
 using _30333_Labs_Kravchenko.UI.Data;
 using _30333_Labs_Kravchenko.UI.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -25,6 +26,8 @@ builder.Services.AddAuthorizationBuilder().AddPolicy("admin", p => p.RequireClai
 builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 
 builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
 builder.Services.AddScoped<IProductService, MemoryProductService>();
@@ -42,19 +45,20 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
+app.MapControllerRoute(
+    name: "catalog",
+    pattern: "Catalog/{category?}",
+    defaults: new { controller = "Product", action = "Index" });
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
 {

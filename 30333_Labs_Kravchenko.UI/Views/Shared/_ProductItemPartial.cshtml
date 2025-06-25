@@ -1,0 +1,23 @@
+﻿@model Medication
+@{
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+}
+
+<div class="col">
+    <div class="card border-dark card-equal-height">
+        <img class="card-img-top card-img-top-fixed" src="@(Model.Image ?? "/Images/no-image.jpg")" alt="No image available" />
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">@Model.Description</p>
+            <h5 class="card-manufacturer">
+                <span class="badge bg-secondary">@Model.Manufacturer</span>
+            </h5>
+        </div>
+        <div class="card-footer text-center">
+            <a class="btn btn-outline-primary" asp-controller="Cart" asp-action="Add" asp-route-id="@Model.Id" asp-route-returnUrl="@returnUrl">
+                Добавить в корзину <i class="fa-solid fa-cart-shopping"></i>
+            </a>
+        </div>
+    </div>
+</div>

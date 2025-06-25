@@ -1,42 +1,30 @@
-﻿@model _30333_Labs_Kravchenko.Domain.Models.ProductListModel<Medication>
+﻿@model ProductListModel<Medication>
 @{
     ViewData["Title"] = "Лекарства";
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
     var categories = ViewData["categories"] as IEnumerable<Category>;
-    var currentCategory = ViewData["currentCategory"]?.ToString() == "Все" ? null : request.Query["category"].ToString();
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    string? category = request.RouteValues["category"]?.ToString();
+    int prev = Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1;
+    int next = Model.CurrentPage == Model.TotalPages ? Model.TotalPages : Model.CurrentPage + 1;
 }
 
 <h2 class="m-3">Лекарства</h2>
 <div class="row">
-    <!-- Выбор категории -->
     <div class="row border-2">
         <ul class="nav">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle"
-                   data-bs-toggle="dropdown"
-                   href="#"
-                   role="button"
-                   aria-expanded="false">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                     @ViewData["currentCategory"]
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item"
-                           asp-controller="Product"
-                           asp-action="Index"
-                           asp-route-category="@null"
-                           asp-route-pageno="1">Все</a>
+                        <a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-category="@null" asp-route-pageno="1">Все</a>
                     </li>
                     @foreach (var item in categories)
                     {
                         <li>
-                            <a class="dropdown-item"
-                               asp-controller="Product"
-                               asp-action="Index"
-                               asp-route-category="@item.NormalizedName"
-                               asp-route-pageno="1">
+                            <a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-category="@item.NormalizedName" asp-route-pageno="1">
                                 @item.Name
                             </a>
                         </li>
@@ -45,79 +33,41 @@
             </li>
         </ul>
     </div>
-    <!-- Список лекарств -->
-    @if (Model != null && Model.Items.Any())
-    {
-        <div class="col-10">
+    <div class="col-10">
+        @if (Model != null && Model.Items.Any())
+        {
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 @foreach (var item in Model.Items)
                 {
-                    <div class="col">
-                        <div class="card border-dark card-equal-height">
-                            <img class="card-img-top card-img-top-fixed"
-                                 src="@item.Image"
-                                 alt="No image available" />
-                            <div class="card-body">
-                                <h5 class="card-title">@item.Name</h5>
-                                <p class="card-text">@item.Description</p>
-                                <h5 class="card-manufacturer">
-                                    <span class="badge bg-secondary">
-                                        @item.Manufacturer
-                                    </span>
-                                </h5>
-                            </div>
-                            <div class="card-footer text-center">
-                                <a class="btn btn-outline-primary"
-                                   asp-controller="Cart"
-                                   asp-action="Add"
-                                   asp-route-id="@item.Id"
-                                   asp-route-returnUrl="@returnUrl">
-                                    Добавить в корзину <i class="fa-solid fa-cart-shopping"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <partial name="_ProductItemPartial" model="@item" />
                 }
             </div>
-            <!-- Панель пагинации -->
-            <nav aria-label="Product pagination" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <!-- Кнопка "Предыдущая" -->
-                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-controller="Product"
-                           asp-action="Index"
-                           asp-route-category="@currentCategory"
-                           asp-route-pageno="@(Model.CurrentPage - 1)"
-                           aria-label="Previous">
-                            <span aria-hidden="true">&laquo; Предыдущая</span>
-                        </a>
-                    </li>
-                    <!-- Номера страниц -->
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                            <a class="page-link"
-                               asp-controller="Product"
-                               asp-action="Index"
-                               asp-route-category="@currentCategory"
-                               asp-route-pageno="@i">@i</a>
+            <!-- Pager -->
+            <div class="row mt-3">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(prev == Model.CurrentPage ? "disabled" : "")">
+                            <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@prev" asp-route-category="@category" aria-label="Previous">
+                                <span aria-hidden="true">«</span>
+                            </a>
                         </li>
-                    }
-                    <!-- Кнопка "Следующая" -->
-                    <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-controller="Product"
-                           asp-action="Index"
-                           asp-route-category="@currentCategory"
-                           asp-route-pageno="@(Model.CurrentPage + 1)"
-                           aria-label="Next">
-                            <span aria-hidden="true">Следующая &raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    }
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@i" asp-route-category="@category">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(next == Model.CurrentPage ? "disabled" : "")">
+                            <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pageno="@next" asp-route-category="@category" aria-label="Next">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            @* <pager current-page="@Model.CurrentPage" total-pages="@Model.TotalPages" category="@category"></pager> *@
+            <!-- Pager -->
+        }
+    </div>
 </div>
 <h2 class="text-warning">@ViewData["Error"]</h2>
