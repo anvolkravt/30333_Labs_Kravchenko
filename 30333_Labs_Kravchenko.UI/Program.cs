@@ -29,8 +29,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 
-builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
-builder.Services.AddScoped<IProductService, MemoryProductService>();
+//builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
+//builder.Services.AddScoped<IProductService, MemoryProductService>();
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(client => client.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
+builder.Services.AddHttpClient<IProductService, ApiProductService>(client => client.BaseAddress = new Uri("https://localhost:7002/api/medications/"));
 
 var app = builder.Build();
 

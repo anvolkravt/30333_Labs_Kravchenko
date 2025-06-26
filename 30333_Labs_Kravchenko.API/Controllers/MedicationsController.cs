@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using _30333_Labs_Kravchenko.API.Data;
 using _30333_Labs_Kravchenko.Domain.Entities;
+using _30333_Labs_Kravchenko.Domain.Models;
 
 namespace _30333_Labs_Kravchenko.API.Controllers
 {
@@ -10,20 +11,58 @@ namespace _30333_Labs_Kravchenko.API.Controllers
     public class MedicationsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public MedicationsController(AppDbContext context)
+        public MedicationsController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
+            Console.WriteLine("MedicationsController initialized");
         }
 
-        // GET: api/Medications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Medication>>> GetMedications()
+        public async Task<ActionResult<ResponseData<ProductListModel<Medication>>>> GetMedications(
+            string? category, int pageNo = 1, int pageSize = 3)
         {
-            return await _context.Medications.ToListAsync();
+            var result = new ResponseData<ProductListModel<Medication>>();
+
+            var data = _context.Medications
+                .Include(m => m.Category)
+                .Where(m => string.IsNullOrEmpty(category) || m.Category.NormalizedName.Equals(category))
+                .Where(m => m.Category.NormalizedName != "soups");
+
+            int totalPages = (int)Math.Ceiling((double)data.Count() / pageSize);
+
+            if (pageNo > totalPages)
+                pageNo = totalPages;
+
+            var listData = new ProductListModel<Medication>
+            {
+                Items = await data
+                    .Skip((pageNo - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(),
+                CurrentPage = pageNo,
+                TotalPages = totalPages
+            };
+
+            result.Data = listData;
+
+            if (!data.Any())
+            {
+                result.Success = false;
+                result.ErrorMessage = "Нет препаратов в выбранной категории";
+            }
+            else
+            {
+                result.Success = true;
+            }
+
+            Console.WriteLine($"Medications retrieved: {listData.Items.Count} on page {pageNo}");
+
+            return Ok(result);
         }
 
-        // GET: api/Medications/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Medication>> GetMedication(int id)
         {
@@ -37,8 +76,6 @@ namespace _30333_Labs_Kravchenko.API.Controllers
             return medication;
         }
 
-        // PUT: api/Medications/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMedication(int id, Medication medication)
         {
@@ -68,8 +105,6 @@ namespace _30333_Labs_Kravchenko.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Medications
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Medication>> PostMedication(Medication medication)
         {
@@ -79,7 +114,70 @@ namespace _30333_Labs_Kravchenko.API.Controllers
             return CreatedAtAction("GetMedication", new { id = medication.Id }, medication);
         }
 
-        // DELETE: api/Medications/5
+        [HttpPost("{id}")]
+        public async Task<IActionResult> SaveImage(int id, IFormFile image)
+        {
+            Console.WriteLine("SaveImage called");
+            var medication = await _context.Medications.FindAsync(id);
+            if (medication == null)
+            {
+                return NotFound();
+            }
+
+            var imagesPath = Path.Combine(_env.WebRootPath, "Images");
+            var randomName = Path.GetRandomFileName();
+            var extension = Path.GetExtension(image.FileName);
+            var fileName = Path.ChangeExtension(randomName, extension);
+            var filePath = Path.Combine(imagesPath, fileName);
+
+            using var stream = System.IO.File.OpenWrite(filePath);
+            await image.CopyToAsync(stream);
+
+            var host = "https://" + Request.Host;
+            var url = $"{host}/Images/{fileName}";
+            medication.Image = url;
+            Console.WriteLine($"Saved URL: {url}");
+            await _context.SaveChangesAsync();
+            _context.Entry(medication).Reload();
+
+            return Ok();
+        }
+
+        [HttpPost("UpdateImage/{id}")]
+        public async Task<IActionResult> UpdateImage(int id, IFormFile image)
+        {
+            var medication = await _context.Medications.FindAsync(id);
+            if (medication == null)
+            {
+                return NotFound();
+            }
+
+            var imagesPath = Path.Combine(_env.WebRootPath, "Images");
+
+            if (!string.IsNullOrEmpty(medication.Image))
+            {
+                var oldImagePath = Path.Combine(imagesPath, Path.GetFileName(medication.Image));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }
+
+            var randomName = Path.GetRandomFileName();
+            var extension = Path.GetExtension(image.FileName);
+            var fileName = Path.ChangeExtension(randomName, extension);
+            var filePath = Path.Combine(imagesPath, fileName);
+
+            using var stream = System.IO.File.OpenWrite(filePath);
+            await image.CopyToAsync(stream);
+
+            var host = "https://" + Request.Host;
+            medication.Image = $"{host}/Images/{fileName}";
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMedication(int id)
         {
@@ -87,6 +185,15 @@ namespace _30333_Labs_Kravchenko.API.Controllers
             if (medication == null)
             {
                 return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(medication.Image))
+            {
+                var imagePath = Path.Combine(_env.WebRootPath, "Images", Path.GetFileName(medication.Image));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
             }
 
             _context.Medications.Remove(medication);
