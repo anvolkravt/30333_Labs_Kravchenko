@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.UI", "30333_Labs_Kravchenko.UI\30333_Labs_Kravchenko.UI.csproj", "{39D84BC1-BF92-4DCF-83B4-ABE2BE7CF270}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.Domain", "30333_Labs_Kravchenko.Domain\30333_Labs_Kravchenko.Domain.csproj", "{7801F6E3-E6A6-44B5-B531-04F9316D7D8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.API", "30333_Labs_Kravchenko.API\30333_Labs_Kravchenko.API.csproj", "{1762E297-59FA-4A01-B9CD-3356AC574E25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7801F6E3-E6A6-44B5-B531-04F9316D7D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7801F6E3-E6A6-44B5-B531-04F9316D7D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7801F6E3-E6A6-44B5-B531-04F9316D7D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
