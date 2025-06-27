@@ -3,6 +3,7 @@ using _30333_Labs_Kravchenko.UI.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,15 +25,18 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddAuthorizationBuilder().AddPolicy("admin", p => p.RequireClaim(ClaimTypes.Role, "admin"));
 
 builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
-
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 
 //builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
 //builder.Services.AddScoped<IProductService, MemoryProductService>();
-builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(client => client.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
-builder.Services.AddHttpClient<IProductService, ApiProductService>(client => client.BaseAddress = new Uri("https://localhost:7002/api/medications/"));
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(options => options.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
+builder.Services.AddHttpClient<IProductService, ApiProductService>(options => options.BaseAddress = new Uri("https://localhost:7002/api/medications/"));
+
+// фальшивка
+//builder.Services.AddDbContext<_30333_Labs_Kravchenko.API.Data.AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
 
 var app = builder.Build();
 

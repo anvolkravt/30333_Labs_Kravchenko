@@ -1,0 +1,81 @@
+﻿@page
+@model _30333_Labs_Kravchenko.UI.Areas.Admin.Pages.IndexModel
+@{
+    ViewData["Title"] = "Admin - Medications";
+}
+<h1>Medications</h1>
+<p>
+    <a asp-page="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Create New
+    </a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Medication[0].Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Medication[0].Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Medication[0].Manufacturer)</th>
+            <th>@Html.DisplayNameFor(model => model.Medication[0].Image)</th>
+            <th>@Html.DisplayNameFor(model => model.Medication[0].Category)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Medication)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td style="max-width: 380px;">@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Manufacturer)</td>
+                <td><img img-action="GetAvatar" img-controller="Image" src="@item.Image" alt="@item.Name" style="max-width: 150px;" /></td>
+                <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-success">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </a>
+                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info ms-1 me-1">
+                        <i class="fa-solid fa-info"></i> Details
+                    </a>
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">
+                        <i class="fa-regular fa-trash-can"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* <pager admin="true" current-page="@Model.CurrentPage" total-pages="@Model.TotalPages" /> *@
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="./Index"
+                   asp-route-pageNo="@(Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1)"
+                   aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <!-- Pages -->
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-page="./Index"
+                       asp-route-pageNo="@i">@i</a>
+                </li>
+            }
+            <!-- Next -->
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="./Index"
+                   asp-route-pageNo="@(Model.CurrentPage == Model.TotalPages ? Model.TotalPages : Model.CurrentPage + 1)"
+                   aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

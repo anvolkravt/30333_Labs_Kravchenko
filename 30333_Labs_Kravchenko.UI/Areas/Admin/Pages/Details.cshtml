@@ -1,0 +1,30 @@
+﻿@page
+@model _30333_Labs_Kravchenko.UI.Areas.Admin.Pages.DetailsModel
+@{
+    ViewData["Title"] = "Medication Details";
+}
+<h1>Medication Details</h1>
+<div>
+    <h4>Medication</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Medication.Name)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Medication.Name)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Medication.Description)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Medication.Description)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Medication.Manufacturer)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Medication.Manufacturer)</dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Medication.Image)</dt>
+        <dd class="col-sm-10">
+            <img img-action="GetAvatar" img-controller="Image" src="@Model.Medication.Image" alt="@Model.Medication.Name" style="max-width: 100px;" />
+        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Medication.Category)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Medication.Category.Name)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Medication.Id" class="btn btn-success">
+        <i class="fa-solid fa-pen-to-square"></i> Edit
+    </a>
+    <a asp-page="./Index" class="btn btn-primary ms-1">Back to List</a>
+</div>
