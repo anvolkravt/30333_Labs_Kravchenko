@@ -1,31 +1,8 @@
-﻿//using _30333_Labs_Kravchenko.UI.Data;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.Mvc;
-//using System.Security.Claims;
-
-//namespace _30333_Labs_Kravchenko.UI.Controllers
-//{
-//    public class ImageController(UserManager<ApplicationUser> userManager) : Controller
-//    {
-//        public async Task<IActionResult> GetAvatar()
-//        {
-//            var email = User.FindFirst(ClaimTypes.Email)!.Value;
-//            var user = await userManager.FindByEmailAsync(email);
-//            if (user == null)
-//            {
-//                return NotFound();
-//            }
-//            if (user.Avatar != null)
-//                return File(user.Avatar, user.MimeType);
-//            var imagePath = Path.Combine("Images", "user.png");
-//            return File(imagePath, "image/png");
-//        }
-//    }
-//}
-
+﻿using _30333_Labs_Kravchenko.UI.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.IO;
+using System.Security.Claims;
 
 namespace _30333_Labs_Kravchenko.API.Controllers
 {
@@ -33,13 +10,15 @@ namespace _30333_Labs_Kravchenko.API.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly string _imagePath;
         private readonly ILogger<ImageController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ImageController(IWebHostEnvironment env, ILogger<ImageController> logger)
+        public ImageController(
+            ILogger<ImageController> logger,
+            UserManager<ApplicationUser> userManager)
         {
-            _imagePath = Path.Combine(env.WebRootPath, "Images");
             _logger = logger;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -51,44 +30,71 @@ namespace _30333_Labs_Kravchenko.API.Controllers
                 return BadRequest("No file uploaded");
             }
 
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(_imagePath, fileName);
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email == null)
+            {
+                _logger.LogError("User email claim not found");
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                _logger.LogError($"User not found: {email}");
+                return NotFound("User not found");
+            }
 
             try
             {
-                Directory.CreateDirectory(_imagePath);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-                _logger.LogInformation($"Image saved: {fileName}");
-                return Ok(fileName);
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                user.Avatar = memoryStream.ToArray();
+                user.MimeType = file.ContentType;
+                await _userManager.UpdateAsync(user);
+
+                _logger.LogInformation($"Avatar updated for user: {email}");
+                return Ok("Avatar uploaded successfully");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to save image: {ex.Message}");
-                return StatusCode(500, $"Failed to save image: {ex.Message}");
+                _logger.LogError($"Failed to upload avatar: {ex.Message}");
+                return StatusCode(500, "Error saving avatar");
             }
         }
 
-        [HttpGet("{fileName}")]
-        public IActionResult GetAvatar(string fileName)
+        [HttpGet]
+        public async Task<IActionResult> GetAvatar()
         {
-            var filePath = Path.Combine(_imagePath, fileName);
-            if (!System.IO.File.Exists(filePath))
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email == null)
             {
-                _logger.LogError($"Image not found: {filePath}");
+                _logger.LogError("User email claim not found");
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                _logger.LogError($"User not found: {email}");
                 return NotFound();
             }
-            var mimeType = Path.GetExtension(fileName).ToLower() switch
+
+            if (user.Avatar != null && !string.IsNullOrEmpty(user.MimeType))
             {
-                ".jpg" => "image/jpeg",
-                ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                _ => "application/octet-stream"
-            };
-            _logger.LogInformation($"Serving image: {fileName}");
-            return PhysicalFile(filePath, mimeType);
+                _logger.LogInformation($"Serving avatar for {email}");
+                return File(user.Avatar, user.MimeType);
+            }
+
+            // fallback: serve default avatar image from wwwroot
+            var fallbackPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "user.png");
+            if (System.IO.File.Exists(fallbackPath))
+            {
+                var fallbackBytes = await System.IO.File.ReadAllBytesAsync(fallbackPath);
+                return File(fallbackBytes, "image/png");
+            }
+
+            _logger.LogWarning("No avatar and no fallback found");
+            return NotFound("No avatar found");
         }
     }
 }
