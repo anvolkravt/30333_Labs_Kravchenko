@@ -1,0 +1,53 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+@using _30333_Labs_Kravchenko.Blazor.Services
+@using _30333_Labs_Kravchenko.Domain.Entities
+@using System.Diagnostics
+
+<h3>Список препаратов</h3>
+
+@if (ProductService == null)
+{
+    <p>ProductService is null</p>
+}
+else if (ProductService.Products == null || !ProductService.Products.Any())
+{
+    <p>Нет данных для отображения</p>
+}
+else
+{
+    <p>Найдено @ProductService.Products.Count() препаратов</p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Название</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ProductService.Products)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [CascadingParameter]
+    public IProductService<Medication> ProductService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ProductService.ListChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        if (ProductService != null)
+        {
+            ProductService.ListChanged -= StateHasChanged;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+﻿@rendermode InteractiveServer
+@using _30333_Labs_Kravchenko.Domain.Entities
+
+@if (Medication == null)
+{
+    <p>Выберите препарат для просмотра деталей</p>
+}
+else
+{
+    <div class="card mt-3" style="width: 18rem;">
+        <img src="@Medication.Image" class="card-img-top" alt="@Medication.Name" />
+        <div class="card-body">
+            <h5 class="card-title">@Medication.Name</h5>
+            <p class="card-text">@Medication.Description</p>
+            @if (!string.IsNullOrEmpty(Medication.Category?.Name))
+            {
+                <span class="badge bg-info">@Medication.Category.Name</span>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Medication Medication { get; set; }
+}

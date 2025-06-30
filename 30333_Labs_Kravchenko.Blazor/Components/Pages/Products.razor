@@ -1,31 +1,28 @@
 ﻿@page "/products"
 @rendermode InteractiveServer
-<h3>Products</h3>
-@inject IProductService<Medication> Service;
+@using _30333_Labs_Kravchenko.Blazor.Services
+@using _30333_Labs_Kravchenko.Domain.Entities
+@using _30333_Labs_Kravchenko.Blazor.Components.Layout.ProductComponents
 
-@if (Service.Products == null || Service.Products.Count() == 0)
+<h3>Препараты</h3>
+
+@if (Service.Products == null || !Service.Products.Any())
 {
-    <p>...loading</p>
+    <p>Нет данных для отображения</p>
 }
 else
 {
     <CascadingValue Value="Service">
-        <List MedicationSelected="ShowDetails"/>
+        <ProductList />
     </CascadingValue>
-
 }
+
 @code {
-    [Parameter]
-    public Medication SelectedMedication { get; set; }
+    [Inject]
+    public IProductService<Medication> Service { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         await Service.GetProducts();
-    }
-
-    void ShowDetails(int id)
-    {
-        SelectedMedication = Service.Products.First(d => d.Id == id);
     }
 }

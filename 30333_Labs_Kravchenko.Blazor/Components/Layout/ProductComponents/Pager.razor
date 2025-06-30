@@ -1,0 +1,52 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+@using _30333_Labs_Kravchenko.Blazor.Services
+@using _30333_Labs_Kravchenko.Domain.Entities
+
+<div class="btn-group" role="group" aria-label="Pager">
+    <button type="button" class="btn btn-outline-primary @(PreviousEnabled ? "" : "disabled")"
+            @onclick="@(() => OnPageSelected(ProductService.CurrentPage - 1))">
+        <span aria-hidden="true">«</span>
+    </button>
+
+    @for (int i = 1; i <= ProductService.TotalPages; i++)
+    {
+        var temp = i;
+        <button type="button" class="btn btn-outline-primary @(IsActive(temp) ? "active" : "")"
+                @onclick="@(() => OnPageSelected(temp))">
+            @temp
+        </button>
+    }
+
+    <button type="button" class="btn btn-outline-primary @(NextEnabled ? "" : "disabled")"
+            @onclick="@(() => OnPageSelected(ProductService.CurrentPage + 1))">
+        <span aria-hidden="true">»</span>
+    </button>
+</div>
+
+@code {
+    [CascadingParameter]
+    public IProductService<Medication> ProductService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ProductService.ListChanged += StateHasChanged;
+    }
+
+    private bool PreviousEnabled => ProductService.CurrentPage > 1;
+    private bool NextEnabled => ProductService.CurrentPage < ProductService.TotalPages;
+    private bool IsActive(int pageNo) => pageNo == ProductService.CurrentPage;
+
+    private async Task OnPageSelected(int pageNo)
+    {
+        if (pageNo >= 1 && pageNo <= ProductService.TotalPages)
+        {
+            await ProductService.GetProducts(pageNo);
+        }
+    }
+
+    public void Dispose()
+    {
+        ProductService.ListChanged -= StateHasChanged;
+    }
+}
