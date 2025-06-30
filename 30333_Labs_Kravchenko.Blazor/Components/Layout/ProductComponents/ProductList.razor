@@ -2,25 +2,21 @@
 @rendermode InteractiveServer
 @using _30333_Labs_Kravchenko.Blazor.Services
 @using _30333_Labs_Kravchenko.Domain.Entities
-@using System.Diagnostics
+@namespace _30333_Labs_Kravchenko.Blazor.Components.Layout.ProductComponents
 
 <h3>Список препаратов</h3>
 
-@if (ProductService == null)
-{
-    <p>ProductService is null</p>
-}
-else if (ProductService.Products == null || !ProductService.Products.Any())
+@if (ProductService.Products == null || !ProductService.Products.Any())
 {
     <p>Нет данных для отображения</p>
 }
 else
 {
-    <p>Найдено @ProductService.Products.Count() препаратов</p>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Название</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +24,11 @@ else
             {
                 <tr>
                     <td>@item.Name</td>
+                    <td>
+                        <button class="btn btn-outline-dark" @onclick="@(() => OnMedicationSelected(item))">
+                            Подробно
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -38,16 +39,21 @@ else
     [CascadingParameter]
     public IProductService<Medication> ProductService { get; set; }
 
+    [Parameter]
+    public EventCallback<Medication> MedicationSelected { get; set; }
+
     protected override void OnInitialized()
     {
         ProductService.ListChanged += StateHasChanged;
     }
 
+    private async Task OnMedicationSelected(Medication medication)
+    {
+        await MedicationSelected.InvokeAsync(medication);
+    }
+
     public void Dispose()
     {
-        if (ProductService != null)
-        {
-            ProductService.ListChanged -= StateHasChanged;
-        }
+        ProductService.ListChanged -= StateHasChanged;
     }
 }

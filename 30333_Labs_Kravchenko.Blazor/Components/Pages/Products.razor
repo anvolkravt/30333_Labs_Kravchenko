@@ -13,7 +13,9 @@
 else
 {
     <CascadingValue Value="Service">
-        <ProductList />
+        <ProductList MedicationSelected="ShowDetails" />
+        <Pager />
+        <MedicationDetails Medication="SelectedMedication" />
     </CascadingValue>
 }
 
@@ -21,8 +23,16 @@ else
     [Inject]
     public IProductService<Medication> Service { get; set; }
 
+    public Medication SelectedMedication { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await Service.GetProducts();
+    }
+
+    private async Task ShowDetails(Medication medication)
+    {
+        SelectedMedication = medication;
+        StateHasChanged();
     }
 }
