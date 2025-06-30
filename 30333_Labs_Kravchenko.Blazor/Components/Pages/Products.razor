@@ -1,0 +1,25 @@
+﻿@page "/products"
+@rendermode InteractiveServer
+<h3>Products</h3>
+@inject IProductService<Medication> Service;
+
+@if (Service.Products == null || Service.Products.Count() == 0)
+{
+    <p>...loading</p>
+}
+else
+{
+    <CascadingValue Value="Service">
+        <List />
+    </CascadingValue>
+
+}
+@code {
+    public Medication SelectedMedication { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await Service.GetProducts();
+    }
+}

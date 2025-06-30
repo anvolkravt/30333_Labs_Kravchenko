@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.API", "30333_Labs_Kravchenko.API\30333_Labs_Kravchenko.API.csproj", "{1762E297-59FA-4A01-B9CD-3356AC574E25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "30333_Labs_Kravchenko.Blazor", "30333_Labs_Kravchenko.Blazor\30333_Labs_Kravchenko.Blazor.csproj", "{848F3699-DA63-45D8-BDA5-F47942301804}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1762E297-59FA-4A01-B9CD-3356AC574E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{848F3699-DA63-45D8-BDA5-F47942301804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{848F3699-DA63-45D8-BDA5-F47942301804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{848F3699-DA63-45D8-BDA5-F47942301804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{848F3699-DA63-45D8-BDA5-F47942301804}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

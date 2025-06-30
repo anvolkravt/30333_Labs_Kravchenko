@@ -1,0 +1,17 @@
+﻿@implements IDisposable
+<h3>List</h3>
+
+@code {
+    [CascadingParameter]
+    IProductService<Medication> productService { get; set; }
+
+    public void Dispose()
+    {
+        productService.ListChanged -= StateHasChanged;
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        productService.ListChanged += StateHasChanged;
+    }
+}
