@@ -5,10 +5,10 @@ namespace _30333_Labs_Kravchenko.Blazor.Services
 {
     public class ApiProductService(HttpClient Http) : IProductService<Medication>
     {
-        List<Medication> _dishes;
+        List<Medication> _medications;
         int _currentPage = 1;
         int _totalPages = 1;
-        public IEnumerable<Medication> Products => _dishes;
+        public IEnumerable<Medication> Products => _medications;
         public int CurrentPage => _currentPage;
         public int TotalPages => _totalPages;
         public event Action ListChanged;
@@ -34,13 +34,13 @@ namespace _30333_Labs_Kravchenko.Blazor.Services
                 // обновить параметры
                 _currentPage = responseData.Data.CurrentPage;
                 _totalPages = responseData.Data.TotalPages;
-                _dishes = responseData.Data.Items;
+                _medications = responseData.Data.Items;
                 ListChanged?.Invoke();
             }
             // В случае ошибки
             else
             {
-                _dishes = null;
+                _medications = null;
                 _currentPage = 1;
                 _totalPages = 1;
             }

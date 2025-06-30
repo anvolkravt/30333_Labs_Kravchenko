@@ -10,16 +10,22 @@
 else
 {
     <CascadingValue Value="Service">
-        <List />
+        <List MedicationSelected="ShowDetails"/>
     </CascadingValue>
 
 }
 @code {
+    [Parameter]
     public Medication SelectedMedication { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await Service.GetProducts();
+    }
+
+    void ShowDetails(int id)
+    {
+        SelectedMedication = Service.Products.First(d => d.Id == id);
     }
 }
